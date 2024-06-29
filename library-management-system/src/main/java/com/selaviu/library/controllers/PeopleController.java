@@ -30,6 +30,7 @@ public class PeopleController {
     
     @GetMapping()
     public String index(Model model) {
+        System.out.println("person");
         model.addAttribute("people", personDAO.index());
         return "people/index";
     }
@@ -37,8 +38,7 @@ public class PeopleController {
     @GetMapping("/{id}")
     public String show(@PathVariable("id") int id, Model model){
         model.addAttribute("person", personDAO.show(id).orElse(null));
-        Person person = personDAO.show(id).orElse(null);
-        System.out.println(person.toString());
+        model.addAttribute("books", personDAO.getBooksByPersonId(id));
         return "people/show";
     }
 
@@ -51,7 +51,6 @@ public class PeopleController {
     @PostMapping()
     public String create(@ModelAttribute("person") @Valid Person person, 
                             BindingResult bindingResult){
-        // personValidator.validate(person, bindingResult);
         if(bindingResult.hasErrors()){
             return "people/new";
         }
@@ -68,7 +67,6 @@ public class PeopleController {
     @PatchMapping("/{id}")
     public String update(@ModelAttribute("person") @Valid Person person,
                             BindingResult bindingResult, @PathVariable("id") int id){
-        // personValidator.validate(person, bindingResult);
         if(bindingResult.hasErrors()){
             return "people/edit";
         }
