@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
+import com.selaviu.library.models.Book;
 import com.selaviu.library.models.Person;
 
 @Component
@@ -29,13 +30,7 @@ public class PersonDAO {
             new BeanPropertyRowMapper<>(Person.class)).stream().findAny();
     }
 
-    // public Optional<Person> show(String email){
-        // return jdbcTemplate.query("SELECT *FROM Person WHERE email=?", new Object[]{email}, new BeanPropertyRowMapper<>(Person.class))
-        //         .stream().findAny();
-    // }
-
     public void save(Person person){
-        //INSERT INTO Person VALUES(1, ?, ?, ?)");
        jdbcTemplate.update("INSERT INTO Person(first_name, last_name, year_of_birth) VALUES(?, ?, ?)", person.getFirstName(), person.getLastName(), person.getYearOfBirth());
     }
 
@@ -47,4 +42,11 @@ public class PersonDAO {
     public void delete(int id){
         jdbcTemplate.update("DELETE FROM Person WHERE id=?", id);
     }
+
+    public List<Book> getBooksByPersonId(int id){
+        return jdbcTemplate.query("SELECT * FROM Book JOIN Person ON Book.person_id = Person.id WHERE Person.id = ?",
+            new Object[]{id}, new BeanPropertyRowMapper<>(Book.class));
+    }
+    
+
 }
